@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<font-family xmlns:android="http://schemas.android.com/apk/res/android">
+    <font
+        android:fontStyle="normal"
+        android:fontWeight="400"
+        android:font="@font/cera_pro_r" />
+    <font
+        android:fontStyle="italic"
+        android:fontWeight="400"
+        android:font="@font/cera_pro_ri" />
+    <font
+        android:fontStyle="normal"
+        android:fontWeight="600"
+        android:font="@font/cera_pro_b" />
+    <font
+        android:fontStyle="italic"
+        android:fontWeight="600"
+        android:font="@font/cera_pro_bi" />
+    <font
+        android:fontStyle="normal"
+        android:fontWeight="200"
+        android:font="@font/cera_pro_l" />
+    <font
+        android:fontStyle="italic"
+        android:fontWeight="800"
+        android:font="@font/cera_pro_black" />
+</font-family>

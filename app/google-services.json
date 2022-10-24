@@ -1,0 +1,98 @@
+{
+  "project_info": {
+    "project_number": "750844422343",
+    "firebase_url": "https://vernal-store-247016.firebaseio.com",
+    "project_id": "vernal-store-247016",
+    "storage_bucket": "vernal-store-247016.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:750844422343:android:db4664825a2e12a9c2f6e2",
+        "android_client_info": {
+          "package_name": "com.dfsl.mybabble"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "750844422343-tjllua3n4kfeitg0inmea3jsc8cia4vp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnvV1_4Tt2XTVR9saLY2PUhsopbR31iqk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "750844422343-tjllua3n4kfeitg0inmea3jsc8cia4vp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:750844422343:android:658dccec8179b5aec2f6e2",
+        "android_client_info": {
+          "package_name": "com.clickds.push_notifications"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "750844422343-tjllua3n4kfeitg0inmea3jsc8cia4vp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnvV1_4Tt2XTVR9saLY2PUhsopbR31iqk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "750844422343-tjllua3n4kfeitg0inmea3jsc8cia4vp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:750844422343:android:e1b5be62f30624aec2f6e2",
+        "android_client_info": {
+          "package_name": "com.twilio.voice.quickstart"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "750844422343-tjllua3n4kfeitg0inmea3jsc8cia4vp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnvV1_4Tt2XTVR9saLY2PUhsopbR31iqk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "750844422343-tjllua3n4kfeitg0inmea3jsc8cia4vp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

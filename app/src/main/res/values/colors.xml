@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#f10028</color>
+    <color name="colorPrimaryDark">#E15A2A</color>
+    <color name="colorAccent">#b0bec5</color>
+    <color name="toggleCaller">#FF9500</color>
+    <color name="toggleListner">#903189</color>
+</resources>
