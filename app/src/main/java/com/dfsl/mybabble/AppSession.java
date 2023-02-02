@@ -12,6 +12,7 @@ public class AppSession {
     public static Boolean inCall = false;
     public static Boolean showRating = false;
     public static Boolean skipRating = false;
+    public static Boolean acceptingCalls = true;
 
     public static String forEmail = "";
     public static String forCode = "";

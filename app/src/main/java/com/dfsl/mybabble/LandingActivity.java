@@ -98,7 +98,7 @@ public class LandingActivity extends Activity
         }
 
         ImageView babbleLogo = new ImageView(this);
-        babbleLogo.setImageResource(R.drawable.ic_babble_logo_white);
+        babbleLogo.setImageResource(R.drawable.mybabblelogo4);
         babbleLogo.setLayoutParams(tmarign);
         babbleLogo.setAdjustViewBounds(true);
         babbleLogo.setScaleType(ImageView.ScaleType.FIT_XY);

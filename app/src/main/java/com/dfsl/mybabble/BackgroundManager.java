@@ -22,15 +22,16 @@ public class BackgroundManager {
 
         RelativeLayout.LayoutParams tLay = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         tLay.addRule(RelativeLayout.ALIGN_PARENT_TOP|RelativeLayout.CENTER_HORIZONTAL);
-        tLay.setMargins(0,40,0,0);
+        tLay.setMargins(72,40,72,0);
 
         RelativeLayout.LayoutParams bLay = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         bLay.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         //bLay.setMargins(0, 800,0,0);
 
         ImageView title = new ImageView(context);
-        title.setImageResource(R.drawable.ic_babble_logo_white);
+        title.setImageResource(R.drawable.mybabblelogo4);
         title.setLayoutParams(tLay);
+
         title.setAdjustViewBounds(true);
 
         ImageView footer = new ImageView(context);
@@ -108,7 +109,8 @@ public class BackgroundManager {
         //bLay.setMargins(0, 800,0,0);
 
         ImageView title = new ImageView(context);
-        title.setImageResource(R.drawable.ic_babble_logo_speech);
+        //title.setImageResource(R.drawable.ic_babble_logo_speech);
+        title.setImageResource(R.drawable.mybabblelogo3);//
         title.setLayoutParams(tLay);
         title.setAdjustViewBounds(true);
         title.setScaleType(ImageView.ScaleType.FIT_XY);

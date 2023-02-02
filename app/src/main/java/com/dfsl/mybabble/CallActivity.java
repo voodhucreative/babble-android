@@ -106,7 +106,7 @@ public class CallActivity extends Activity implements SensorEventListener
 
     private AudioSwitch audioSwitch;
 
-    private boolean isCaller = false;
+    private boolean isCaller = true;//false;
 //    private boolean inPool = false;
 
     RegistrationListener registrationListener = registrationListener();
@@ -149,6 +149,14 @@ public class CallActivity extends Activity implements SensorEventListener
 
     public static Context callContext;
 
+    public Switch mode;
+
+    LinearLayout customSwitch;
+
+    TextView acceptingCalls;
+    TextView yesText;
+    TextView noText;
+
     public void initaliseView()
     {
         AndroidNetworking.initialize(getApplicationContext());
@@ -168,6 +176,12 @@ public class CallActivity extends Activity implements SensorEventListener
         width = displayMetrics.widthPixels;
 
         width10 = Math.round(width * 0.10f);
+
+        // set default state
+
+        // add the user to the listener pool
+
+
     }
 
     @Override
@@ -236,11 +250,13 @@ public class CallActivity extends Activity implements SensorEventListener
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         APICalls.getUserUse(this);
+
+        InitDefaultView();
     }
 
     private RelativeLayout activeView()
     {
-        if(activeCall != null)
+        if(InCall())
         {
             return callLayout();
         }
@@ -269,7 +285,7 @@ public class CallActivity extends Activity implements SensorEventListener
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
         );
-        params2.setMargins(60,40,60,80);
+        params2.setMargins(32,80,32,80);
 //        params2.width = 200;
 //        params2.height = 200;
 
@@ -284,19 +300,15 @@ public class CallActivity extends Activity implements SensorEventListener
         callDuration.setLayoutParams(params3);
         callDuration.setGravity(Gravity.CENTER_HORIZONTAL);
 
-        TextView durText = new TextView(this);
-        durText.setText("Time Remaining: ");
-        durText.setTextColor(Color.WHITE);
-        durText.setTextSize(24);
-        durText.setTypeface(Fonts.SetTypeFace(this, R.font.cera_pro_b));
-        durText.setGravity(Gravity.CENTER_HORIZONTAL);
+        TextView durText = CustomWidgets.SimpleTextView(this, 20, "Time Remaining: ", Color.WHITE, Gravity.CENTER);
+
 
         countdown = new Chronometer(this);
         countdown.setCountDown(true);
         //countdown.setFormat("MM:SS");
         countdown.setBase(SystemClock.elapsedRealtime() + (AppSession.callDurationInSeconds * 1000) + 1000);//set countdown time
         countdown.setTextColor(Color.WHITE);
-        countdown.setTextSize(24);
+        countdown.setTextSize(20);
         countdown.setTypeface(Fonts.SetTypeFace(this, R.font.cera_pro_b));
         countdown.setGravity(Gravity.CENTER_HORIZONTAL);
         countdown.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener()
@@ -337,7 +349,7 @@ public class CallActivity extends Activity implements SensorEventListener
 
         Button panic = new Button(this);
         panic.setText("Report as abusive");
-        panic.setTextSize(22);
+        panic.setTextSize(16);
 //        panic.setHeight(200);
         panic.setPadding(50,50,50,50);
         panic.setBackgroundResource(R.drawable.rounded_button);
@@ -355,7 +367,7 @@ public class CallActivity extends Activity implements SensorEventListener
 
         LinearLayout inCallButtons = new LinearLayout(this);
         inCallButtons.setOrientation(LinearLayout.HORIZONTAL);
-        inCallButtons.setLayoutParams(new LinearLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
+        //inCallButtons.setLayoutParams(new LinearLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
         inCallButtons.setGravity(Gravity.CENTER);
 
         panic.setLayoutParams(params);
@@ -363,9 +375,9 @@ public class CallActivity extends Activity implements SensorEventListener
         ImageButton mutebtn = new ImageButton(this);
         mutebtn.setImageResource(R.drawable.ic_mute);
         mutebtn.setBackgroundColor(Color.TRANSPARENT);
-        mutebtn.setAlpha(0.7f);
-        mutebtn.setMaxWidth(width > 1750? 48: 28);
-        mutebtn.setScaleType(ImageView.ScaleType.FIT_XY);
+        //mutebtn.setAlpha(0.7f);
+        mutebtn.setMaxWidth(32);//width > 1750? 48: 28);
+        //mutebtn.setScaleType(ImageView.ScaleType.FIT_XY);
         mutebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -380,11 +392,11 @@ public class CallActivity extends Activity implements SensorEventListener
         hangup.setImageResource(R.drawable.ic_call_end_white_24dp);
         hangup.setBackgroundColor(Color.RED);
         hangup.setBackgroundResource(R.drawable.rounded_button);
-        hangup.setScaleType(ImageView.ScaleType.FIT_XY);
-        hangup.setMaxWidth(width > 1750? 48: 28);
+        //hangup.setScaleType(ImageView.ScaleType.FIT_XY);
+        hangup.setMaxWidth(32);//width > 1750? 48: 28);
         GradientDrawable hang = (GradientDrawable) hangup.getBackground();
         hang.setColor(Color.RED);
-        //hangup.setPadding(50,50,50,50);
+        hangup.setPadding(24,24,24,24);
         hangup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -399,8 +411,8 @@ public class CallActivity extends Activity implements SensorEventListener
         ImageButton speakerbtn = new ImageButton(this);
         speakerbtn.setImageResource(R.drawable.ic_phonelink_ring_white_24dp);
         speakerbtn.setBackgroundColor(Color.TRANSPARENT);
-        speakerbtn.setScaleType(ImageView.ScaleType.FIT_XY);
-        speakerbtn.setMaxWidth(width > 1750? 48: 28);
+        //speakerbtn.setScaleType(ImageView.ScaleType.FIT_XY);
+        speakerbtn.setMaxWidth(32);//width > 1750? 48: 28);
         speakerbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -443,8 +455,108 @@ public class CallActivity extends Activity implements SensorEventListener
         return cLayout;
     }
 
+
+    SeekBar slider1;
+    SeekBar slider2;
+    SeekBar slider3;
+    SeekBar slider4;
+    SeekBar slider5;
+    SeekBar slider6;
+
+    private LinearLayout ratingSlider(SeekBar slider, int numberOfRatings)
+    {
+        RelativeLayout.LayoutParams tmarign = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        tmarign.setMargins(0,16,0,16);
+        tmarign.addRule(RelativeLayout.CENTER_HORIZONTAL);
+
+        // Slider Section
+        LinearLayout.LayoutParams slp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1);
+        LinearLayout sliderSection = new LinearLayout(this);
+        sliderSection.setOrientation(LinearLayout.VERTICAL);
+        sliderSection.setLayoutParams(tmarign);
+
+        LinearLayout poorGreatText = new LinearLayout(this);
+        poorGreatText.setOrientation(LinearLayout.HORIZONTAL);
+
+        TextView poor = new TextView(this);
+        TextView great = new TextView(this);
+        poor.setText("Poor");
+        poor.setLayoutParams(slp);
+        poor.setTypeface(Fonts.SetTypeFace(this, R.font.cera_pro_r));
+        great.setText("Great");
+        great.setTypeface(Fonts.SetTypeFace(this, R.font.cera_pro_r));
+        great.setLayoutParams(slp);
+        poor.setGravity(Gravity.LEFT);
+        great.setGravity(Gravity.RIGHT);
+        poor.setTextSize(16);
+        great.setTextSize(16);
+
+        poorGreatText.addView(poor);
+        poorGreatText.addView(new Space(this));
+        poorGreatText.addView(great);
+
+        slider = new SeekBar(this);
+        slider.setMax(4);
+        slider.setProgress(2);
+        slider.setPadding(60,0,60,0);
+        slider.setThumbOffset(0);
+        //slider.setMinimumHeight(30);
+
+        GradientDrawable gD = new GradientDrawable();
+        gD.setColor(Color.parseColor(BabbleColors.DARK_ORANGE));
+        gD.setShape(GradientDrawable.OVAL);
+        gD.setSize(40,40);
+
+        slider.setThumb(gD);
+
+
+        LinearLayout lines = new LinearLayout(this);
+        lines.setOrientation(LinearLayout.HORIZONTAL);
+
+        for(int i=0; i<numberOfRatings; i++)
+        {
+            TextView rateLine = new TextView(this);
+            rateLine.setText("" + (i+1));
+            rateLine.setLayoutParams(slp);
+            rateLine.setGravity(Gravity.CENTER);
+            lines.addView(rateLine);
+        }
+
+        //sliderSection.addView(poorGreatText);
+        sliderSection.addView(slider);
+        sliderSection.addView(lines);
+
+        return sliderSection;
+    }
+
+
+    private RelativeLayout happiRatingScreen()
+    {
+        RelativeLayout rLay = new RelativeLayout(this);
+        rLay.setBackgroundColor(Color.parseColor(BabbleColors.SLATE));
+        rLay.setGravity(Gravity.CENTER);
+
+
+
+        return rLay;
+    }
+
     private RelativeLayout ratingScreen()
     {
+        slider1 = new SeekBar(this);
+        slider2 = new SeekBar(this);
+        slider3 = new SeekBar(this);
+        slider4 = new SeekBar(this);
+        slider5 = new SeekBar(this);
+        slider6 = new SeekBar(this);
+
+        LinearLayout sliderSection1 = ratingSlider(slider1, 5);
+        LinearLayout sliderSection2 = ratingSlider(slider2, 5);
+        LinearLayout sliderSection3 = ratingSlider(slider3, 5);
+        LinearLayout sliderSection4 = ratingSlider(slider4, 5);
+        LinearLayout sliderSection5 = ratingSlider(slider5, 5);
+        LinearLayout sliderSection6 = ratingSlider(slider6, 5);
+
 
         RelativeLayout.LayoutParams tmarign = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         tmarign.setMargins(0,40,0,40);
@@ -467,92 +579,6 @@ public class CallActivity extends Activity implements SensorEventListener
         cont.setGravity(Gravity.CENTER);
         cont.setOrientation(LinearLayout.VERTICAL);
 
-        TextView title = new TextView(this);
-        title.setText("Please rate your call");
-        title.setGravity(Gravity.CENTER);
-        title.setTextSize(28);
-        title.setTextColor(Color.BLACK);
-        title.setTypeface(Fonts.SetTypeFace(this, R.font.cera_pro_b));
-
-        LinearLayout.LayoutParams slp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1);
-
-        LinearLayout sliderSection = new LinearLayout(this);
-        sliderSection.setOrientation(LinearLayout.VERTICAL);
-        sliderSection.setLayoutParams(tmarign);
-
-        LinearLayout poorGreatText = new LinearLayout(this);
-        poorGreatText.setOrientation(LinearLayout.HORIZONTAL);
-
-        TextView poor = new TextView(this);
-        TextView great = new TextView(this);
-        poor.setText("Poor");
-        poor.setLayoutParams(slp);
-        poor.setTypeface(Fonts.SetTypeFace(this, R.font.cera_pro_r));
-        great.setText("Great");
-        great.setTypeface(Fonts.SetTypeFace(this, R.font.cera_pro_r));
-        great.setLayoutParams(slp);
-        poor.setGravity(Gravity.LEFT);
-        great.setGravity(Gravity.RIGHT);
-        poor.setTextSize(22);
-        great.setTextSize(22);
-
-        poorGreatText.addView(poor);
-        poorGreatText.addView(new Space(this));
-        poorGreatText.addView(great);
-
-        SeekBar slider = new SeekBar(this);
-        slider.setMax(4);
-        slider.setProgress(2);
-        slider.setPadding(70,0,70,0);
-        slider.setThumbOffset(0);
-        //slider.setMinimumHeight(30);
-
-        GradientDrawable gD = new GradientDrawable();
-        gD.setColor(Color.parseColor(BabbleColors.DARK_ORANGE));
-        gD.setShape(GradientDrawable.OVAL);
-        gD.setSize(80,80);
-
-        slider.setThumb(gD);
-
-        LinearLayout lines = new LinearLayout(this);
-        lines.setOrientation(LinearLayout.HORIZONTAL);
-
-        TextView l1 = new TextView(this);
-        l1.setText("|");
-        l1.setLayoutParams(slp);
-        l1.setGravity(Gravity.CENTER);
-
-        TextView l2 = new TextView(this);
-        l2.setText("|");
-        l2.setLayoutParams(slp);
-        l2.setGravity(Gravity.CENTER);
-
-        TextView l3 = new TextView(this);
-        l3.setText("|");
-        l3.setLayoutParams(slp);
-        l3.setGravity(Gravity.CENTER);
-
-        TextView l4 = new TextView(this);
-        l4.setText("|");
-        l4.setLayoutParams(slp);
-        l4.setGravity(Gravity.CENTER);
-
-        TextView l5 = new TextView(this);
-        l5.setText("|");
-        l5.setLayoutParams(slp);
-        l5.setGravity(Gravity.CENTER);
-
-        lines.addView(l1);
-        lines.addView(l2);
-        lines.addView(l3);
-        lines.addView(l4);
-        lines.addView(l5);
-        //lines.setPadding(-30,0,-30,0);
-
-        sliderSection.addView(poorGreatText);
-        sliderSection.addView(slider);
-        sliderSection.addView(lines);
-
         LinearLayout.LayoutParams reportLayout = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1);
         reportLayout.setMargins(0, 20, 0, 20);
 
@@ -574,27 +600,9 @@ public class CallActivity extends Activity implements SensorEventListener
                 }
             }
         });
-        reportButton.setTextSize(22);
+        reportButton.setTextSize(16);
         reportButton.setLayoutParams(reportLayout);
 
-//        Button helpButton = new Button(this);
-//        helpButton.setText("The caller needs help");
-//        helpButton.setBackgroundResource(R.drawable.rounded_button);
-//        helpButton.setTextColor(Color.WHITE);
-//        GradientDrawable helpdraw = (GradientDrawable) helpButton.getBackground();
-//        helpdraw.setColor(Color.parseColor(BabbleColors.BLACK));
-//        helpButton.setLayoutParams(tmarign);
-//        helpButton.setTransformationMethod(null);
-//        helpButton.setTypeface(Fonts.SetTypeFace(this, R.font.cera_pro_r));
-//        helpButton.setOnClickListener(new View.OnClickListener(){
-//            public void onClick(View v) {
-//                //Report call
-//                APICalls.reportCall(1);
-//                AppSession.showRating = false;
-//                resetUI();
-//                ReportPopup();
-//            }
-//        });
 
         Button submitButton = new Button(this);
         submitButton.setText("Submit");
@@ -606,48 +614,515 @@ public class CallActivity extends Activity implements SensorEventListener
         submitButton.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v) {
                 //Submit Rating
-                APICalls.rateCall(slider.getProgress() + 1);
+                APICalls.rateCall(slider1.getProgress() + 1);
                 AppSession.showRating = false;
                 AppSession.lastCallSID = "";
                 resetUI();
             }
         });
+
         submitButton.setTransformationMethod(null);
         submitButton.setTypeface(null, Typeface.BOLD);
-        submitButton.setTextSize(22);
+        submitButton.setTextSize(16);
 
-//        Button close = new Button(this);
-//        close.setText("Close");
-//        close.setBackgroundColor(Color.TRANSPARENT);
-//        close.setTransformationMethod(null);
-//        close.setTextSize(22);
-//        close.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                AppSession.showRating = false;
-//                AppSession.lastCallSID = "";
-//                resetUI();
-//            }
-//        });
-
+        TextView title = CustomWidgets.SimpleTextView(this, 20, "How are you feeling?\n");
         cont.addView(title);
-        cont.addView(sliderSection);
-        cont.addView(reportButton);
-//        cont.addView(helpButton);
+
+        TextView metric1 = CustomWidgets.SimpleTextView(this, 16, "Positivity");
+        cont.addView(metric1);
+        cont.addView(sliderSection1);
+
+        TextView metric2 = CustomWidgets.SimpleTextView(this, 16, "Energy");
+        cont.addView(metric2);
+        cont.addView(sliderSection2);
+
+        /*
+        TextView metric3 = CustomWidgets.SimpleTextView(this, 16, "Calmness");
+        cont.addView(metric3);
+        cont.addView(sliderSection3);
+        */
+
+        /*
+        TextView metric4 = CustomWidgets.SimpleTextView(this, 16, "Anxiety");
+        cont.addView(metric4);
+        cont.addView(sliderSection4);*/
+
+
+        TextView metric5 = CustomWidgets.SimpleTextView(this, 16, "Loneliness");
+        cont.addView(metric5);
+        cont.addView(sliderSection5);
+
+        TextView title2 = CustomWidgets.SimpleTextView(this, 20, "\nHow was your call?\n");
+        cont.addView(title2);
+
+        TextView metric6 = CustomWidgets.SimpleTextView(this, 16, "Call Quality");
+        cont.addView(metric6);
+        cont.addView(sliderSection6);
         cont.addView(submitButton);
-//        cont.addView(close);
+
+        TextView title3 = CustomWidgets.SimpleTextView(this, 20, "\nBad Chat Experience?");
+        cont.addView(title3);
+        cont.addView(reportButton);
+
         cont.setPadding(20,20, 20,20);
+
+
         rLay.addView(BackgroundManager.callBackgroundView(this));
         rLay.addView(cont);
 
         return rLay;
     }
 
+    private void InitDefaultView()
+    {
+        APICalls.getPoolStatus();
+
+        relativeLayout.setBackgroundColor(Color.parseColor(BabbleColors.PURPLE));
+
+        count.setVisibility(View.VISIBLE);
+
+        if (customSwitch != null)
+        {
+           // customSwitch.setVisibility(View.INVISIBLE); // temporary, will change to accept calls
+        }
+
+        SetCallButtonState(Constants.PRESS_TO_CHAT, 1f);
+        /*
+        if (AppSession.inPool)
+        {
+            //isCaller = false;
+            //mode.setChecked(isCaller);
+            //InPoolPopup();
+            //return;
+        }
+
+        isCaller = isChecked;
+
+        if(isCaller)
+        {
+            relativeLayout.setBackgroundColor(Color.parseColor(BabbleColors.PURPLE));
+            callButton.setAlpha(1f);
+            tv.setText("Press to start a call");
+            count.setVisibility(View.VISIBLE);
+        }*/
+
+        LeavePool();
+        JoinPool();
+    }
+
+    private Boolean MakeCall()
+    {
+        LeavePool();
+        startCall();
+        SetCallButtonState("Hang Up", 1f);
+        return false;
+    }
+
+    private Boolean HangUp()
+    {
+        PanicPopup();
+        JoinPool();
+        return false;
+    }
+
+    private void LeavePool()
+    {
+        APICalls.leavePool();
+        AppSession.inPool = false;
+        SetCallButtonState(Constants.PRESS_TO_CHAT, 1f);
+    }
+
+    private void JoinPool()
+    {
+        APICalls.joinPool();
+        AppSession.inPool = true;
+        SetCallButtonState(Constants.PRESS_TO_CHAT, 1f);
+    }
+
+    private void SetCallButtonState(String text, Float opacity)
+    {
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            callButton.setAlpha(opacity);
+            tv.setText(text);
+        }, 500);
+    }
+
+    private void AnimateCallButton()
+    {
+        callButton.startAnimation(tappedDown());
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            callButton.startAnimation(tappedUp());
+        }, 150);
+    }
+
+    private void SetAcceptingCalls(Boolean acctingCalls)
+    {
+        AppSession.acceptingCalls = acctingCalls;
+
+        if (AppSession.acceptingCalls)
+        {
+            JoinPool();
+        }
+        else
+        {
+            LeavePool();
+        }
+    }
+
+    private Boolean InCall()
+    {
+        if (activeCall != null)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    private Boolean HandleCallButtonClicked()
+    {
+        if(!isBusy)
+        {
+            isBusy = true;
+            AnimateCallButton();
+
+            // if we're using the combined view, the call button will only
+            // ever make a call, listening will be automated
+            if (AppSettings.combinedViews)
+            {
+                // the main button action will always be to make a call or hang up
+                if (AppSession.poolCount > 0)
+                {
+                    //MakeCall();
+                    ShowPromptsPopup();
+                }
+                else
+                {
+                    JoinPool();
+                    NoListenersPopup();
+                }
+            }
+            else
+            {
+
+                if (isCaller)
+                {
+                    if (AppSession.poolCount > 0) // there are listeners available
+                    {
+                        //make call
+                        APICalls.leavePool();
+                        startCall();
+                    }
+                    else
+                    {
+                        NoListenersPopup();
+                    }
+                }
+                else
+                {
+                    // listener
+                    SetCallButtonState("Changing Status", 1f);
+                    if (AppSession.inPool)
+                    {
+                        //remove from pool
+                        LeavePool();
+                        /*
+                        APICalls.leavePool();
+                        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                            AppSession.inPool = false;
+                            callButton.setAlpha(1f);
+                            tv.setText("Press to start listening");
+                        }, 500);*/
+
+                    } else {
+                        //join pool
+                        JoinPool();
+                        /*
+                        APICalls.joinPool();
+                        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                            //retrieveAccessToken();
+                            AppSession.inPool = true;
+                            callButton.setAlpha(0.5f);
+                            tv.setText("You are in the queue to accept calls, hit the Babble button to leave.");
+                        }, 500);*/
+                    }
+                }
+            }
+            isBusy = false;
+        }
+        APICalls.getPoolStatus();
+
+        return false; //
+    }
+
     private RelativeLayout mainLayout()
+    {
+        relativeLayout = new RelativeLayout(this);
+        relativeLayout.setBackgroundColor(Color.parseColor(BabbleColors.PURPLE));
+
+        LinearLayout cont = new LinearLayout(this);
+        cont.setPadding(8,8,8,8);
+
+        RelativeLayout.LayoutParams tmarign = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        tmarign.setMargins(0,40,0,40);
+        tmarign.addRule(RelativeLayout.CENTER_HORIZONTAL);
+
+        RelativeLayout.LayoutParams btnmarign = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        btnmarign.setMargins(0,128,0,16);
+        btnmarign.height = Math.round(height / 4);
+        btnmarign.addRule(RelativeLayout.CENTER_HORIZONTAL);
+
+        RelativeLayout.LayoutParams marign = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        marign.setMargins(0,16,0,72);
+        marign.addRule(RelativeLayout.CENTER_HORIZONTAL);
+
+        // CREATE MAIN INSTRUCTION LABEL
+        tv = new TextView(this);
+        tv.setText(Constants.PRESS_TO_CHAT);
+        tv.setTextSize(28);
+        tv.setTextColor(Color.WHITE);
+        tv.setGravity(Gravity.CENTER);
+        tv.setLayoutParams(marign);
+        tv.setTypeface(Fonts.SetTypeFace(this, R.font.cera_pro_b));
+
+        if(width > 1500)
+        {
+            tv.setTextSize(32);
+        }
+
+        if (width <= 800)
+        {
+            tv.setPadding(0, 20, 0, 0);
+            tv.setTextSize(24);
+        }
+
+        // CREATE MAIN CALL BUTTON
+        callButton = new ImageButton(this);
+        callButton.setImageResource(R.drawable.ic_babble_circle_active);
+        callButton.setBackgroundColor(Color.TRANSPARENT);
+        callButton.setLayoutParams(btnmarign);
+        callButton.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        callButton.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v)
+            {
+                HandleCallButtonClicked();
+            }
+        });
+
+        // CREATE LOGOUT BUTTON
+        Button logout = new Button(this);
+        logout.setText(Constants.LOGOUT);
+        logout.setTextSize(16);
+        logout.setTransformationMethod(null);
+        logout.setBackgroundResource(R.drawable.rounded_button);
+        logout.setTextColor(Color.WHITE);
+        GradientDrawable logdraw = (GradientDrawable) logout.getBackground();
+        logdraw.setColor(Color.TRANSPARENT);
+        //logout.setPadding(8,8,8,8);
+        logout.setWidth((int) Math.round(width * 0.5));
+        logout.setTypeface(Fonts.SetTypeFace(this, R.font.cera_pro_b));
+        logout.setGravity(Gravity.END);
+        logout.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v) {
+                LogOut();
+            }
+        });
+
+        if(width > 1500)
+        {
+            logout.setTextSize(26);
+        }
+
+        Button issue = new Button(this);
+        issue.setText(Constants.HAD_AN_ISSUE);
+        issue.setTextSize(16);
+        issue.setTransformationMethod(null);
+        issue.setBackgroundResource(R.drawable.rounded_button);
+        issue.setTextColor(Color.WHITE);
+        logdraw.setColor(Color.TRANSPARENT);
+        //issue.setPadding(8,8,8,8);
+        issue.setWidth((int) Math.round(width * 0.5));
+        issue.setTypeface(Fonts.SetTypeFace(this, R.font.cera_pro_b));
+        issue.setGravity(Gravity.START);
+        issue.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v) {
+                String[] addresses = new String[]{ "support@mybabble.chat" };
+                String subject = "Issue with Babble Android Application";
+
+                Intent intent = new Intent(Intent.ACTION_SENDTO);
+                intent.setData(Uri.parse("mailto:")); // only email apps should handle this
+                intent.putExtra(Intent.EXTRA_EMAIL, addresses);
+                intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+                startActivity(intent);
+            }
+        });
+        /*
+        Button issueText = new Button(this);
+        issueText.setText("Had an issue?");
+        issueText.setBackgroundColor(Color.TRANSPARENT);
+        issueText.setTransformationMethod(null);
+        issueText.setTextSize(16);
+        issueText.setTextColor(Color.WHITE);
+        issueText.setTypeface(Fonts.SetTypeFace(this, R.font.cera_pro_b));
+        issueText.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v)
+            {
+                String[] addresses = new String[]{ "support@mybabble.chat" };
+                String subject = "Issue with Babble Android Application";
+
+                Intent intent = new Intent(Intent.ACTION_SENDTO);
+                intent.setData(Uri.parse("mailto:")); // only email apps should handle this
+                intent.putExtra(Intent.EXTRA_EMAIL, addresses);
+                intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+                startActivity(intent);
+            }
+        });*/
+
+
+        count = new TextView(this);
+
+        count.setText(Constants.USERS_ONLINE + " : " + AppSession.poolCount + "\n\n");
+        count.setTextColor(Color.parseColor(BabbleColors.ORANGE));
+        count.setTextSize(20);
+
+        count.setGravity(Gravity.CENTER);
+        count.setVisibility(View.VISIBLE);
+        count.setTypeface(Fonts.SetTypeFace(this, R.font.cera_pro_b));
+
+        // Defining the layout parameters of the TextView
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT);
+        lp.addRule(RelativeLayout.CENTER_IN_PARENT);
+
+        // Setting the parameters on the TextView
+        cont.setLayoutParams(lp);
+        cont.setOrientation(LinearLayout.VERTICAL);
+
+
+
+        RelativeLayout bottomButtons = new RelativeLayout(this);
+        RelativeLayout.LayoutParams bbp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+
+        bbp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM );
+        bbp.setMargins(width10,0,width10,32);
+        bottomButtons.setLayoutParams(bbp);
+        bottomButtons.setGravity(Gravity.CENTER);
+
+
+        //bottomButtons.addView(count);
+        //cont.addView(issue);
+        LinearLayout buttonsHolder = new LinearLayout(this);
+        buttonsHolder.setPadding(8,8,8,8);
+        buttonsHolder.setOrientation(LinearLayout.HORIZONTAL);
+        buttonsHolder.setGravity(Gravity.CENTER);
+        buttonsHolder.addView(issue);
+        buttonsHolder.addView(logout);
+
+        //bottomButtons.addView(issue);
+        bottomButtons.addView(buttonsHolder);
+
+        // create the "ACCEPT CALLS" switch
+        customSwitch = new LinearLayout(this);
+        customSwitch.setOrientation(LinearLayout.HORIZONTAL);
+        customSwitch.setGravity(Gravity.CENTER);
+        customSwitch.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
+        acceptingCalls = CustomWidgets.SimpleTextView(this, 16, Constants.ACCEPTING_CALLS + "\n", Color.WHITE);
+        acceptingCalls.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+
+        yesText = CustomWidgets.SimpleTextView(this, 16, Constants.YES, Color.WHITE);
+        noText = CustomWidgets.SimpleTextView(this, 16, Constants.NO, Color.WHITE);
+
+        //Allows screen scaling but in case of smaller screens does not cause an issue
+        int toggleTextWidth = (int) Math.round(width * 0.25);
+
+        if(toggleTextWidth < 300)
+        {
+            toggleTextWidth = 250;
+        }
+
+        yesText.setWidth(toggleTextWidth);
+        yesText.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
+        noText.setWidth(toggleTextWidth);
+        noText.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_END);
+
+        mode = new Switch(this);
+        mode.setChecked(isCaller);
+        mode.setGravity(Gravity.CENTER);
+        mode.setTextColor(Color.WHITE);
+        mode.getThumbDrawable().setTint(ContextCompat.getColor(this, R.color.toggleCaller));
+
+        mode.setChecked(AppSession.acceptingCalls);
+        UpdatToggle();
+
+
+        mode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            {
+                if(isBusy)
+                {
+                    return;
+                }
+                APICalls.getPoolStatus();
+
+                AppSession.acceptingCalls = !AppSession.acceptingCalls;
+                mode.setChecked(AppSession.acceptingCalls);
+                UpdatToggle();
+            }
+        });
+
+        customSwitch.addView(noText);
+        customSwitch.addView(mode);
+        customSwitch.addView(yesText);
+
+        // Adding the TextView to the RelativeLayout as a child`
+
+        cont.addView(callButton);
+        cont.addView(tv);
+
+        cont.addView(count);
+
+        cont.addView(acceptingCalls);
+        cont.addView(customSwitch);
+
+
+
+
+        relativeLayout.addView(BackgroundManager.callBackgroundView(this));
+        relativeLayout.addView(cont);
+
+        relativeLayout.addView(bottomButtons);
+
+        JoinPool();
+
+        return relativeLayout;
+    }
+
+    private void UpdatToggle()
+    {
+        if (AppSession.acceptingCalls)
+        {
+            acceptingCalls.setAlpha(1.0f);
+            noText.setAlpha(0.5f);
+            yesText.setAlpha(1.0f);
+        }
+        else
+        {
+            acceptingCalls.setAlpha(1.0f);
+            noText.setAlpha(1.0f);
+            yesText.setAlpha(0.5f);
+        }
+    }
+
+
+
+
+    private RelativeLayout mainLayoutOld()
     {
         // Creating a new RelativeLayout
         relativeLayout = new RelativeLayout(this);
         LinearLayout cont = new LinearLayout(this);
+
         relativeLayout.setBackgroundColor(Color.parseColor(BabbleColors.ORANGE));
 
         RelativeLayout.LayoutParams tmarign = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -664,17 +1139,17 @@ public class CallActivity extends Activity implements SensorEventListener
         marign.addRule(RelativeLayout.CENTER_HORIZONTAL);
 
         tv = new TextView(this);
-        tv.setText("Press to start listening");
+        tv.setText(Constants.PRESS_TO_LISTEN);
         tv.setTextSize(28);
         tv.setTextColor(Color.WHITE);
         tv.setGravity(Gravity.CENTER);
         tv.setLayoutParams(marign);
         tv.setTypeface(Fonts.SetTypeFace(this, R.font.cera_pro_b));
 
-        if(width > 1500){
+        if(width > 1500)
+        {
             tv.setTextSize(32);
         }
-
 
         if (width <= 800)
         {
@@ -690,6 +1165,9 @@ public class CallActivity extends Activity implements SensorEventListener
         callButton.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v)
             {
+                HandleCallButtonClicked();
+
+                /*
                 if(!isBusy)
                 {
                     isBusy = true;
@@ -697,41 +1175,58 @@ public class CallActivity extends Activity implements SensorEventListener
                     new Handler(Looper.getMainLooper()).postDelayed(() -> {
                         callButton.startAnimation(tappedUp());
                     }, 150);
-                    if (isCaller) {
-                        if (AppSession.poolCount > 0) {
-                            //make call
+
+                    if (AppSettings.combinedViews)
+                    {
+                        // the main button action will always be to make a call
+                        if (AppSession.poolCount > 0)
+                        {
                             APICalls.leavePool();
                             startCall();
-                        } else {
+                        }
+                        else
+                        {
                             NoListenersPopup();
                         }
-                    } else {
-                        tv.setText("Changing Status");
-                        if (AppSession.inPool) {
-                            //remove from pool
-                            APICalls.leavePool();
-                            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                                AppSession.inPool = false;
-                                callButton.setAlpha(1f);
-                                tv.setText("Press to start listening");
-                            }, 500);
-
-                        } else {
-                            //join pool
-                            APICalls.joinPool();
-                            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                                //retrieveAccessToken();
-                                AppSession.inPool = true;
-                                callButton.setAlpha(0.5f);
-                                tv.setText("You are in the queue to accept calls, hit the Babble button to leave.");
-                            }, 500);
-                        }
-
                     }
+                    else
+                    {
+                        if (isCaller) {
+                            if (AppSession.poolCount > 0) {
+                                //make call
+                                APICalls.leavePool();
+                                startCall();
+                            } else {
+                                NoListenersPopup();
+                            }
+                        } else {
+                            tv.setText("Changing Status");
+                            if (AppSession.inPool) {
+                                //remove from pool
+                                APICalls.leavePool();
+                                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                                    AppSession.inPool = false;
+                                    callButton.setAlpha(1f);
+                                    tv.setText("Press to start listening");
+                                }, 500);
 
+                            } else {
+                                //join pool
+                                APICalls.joinPool();
+                                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                                    //retrieveAccessToken();
+                                    AppSession.inPool = true;
+                                    callButton.setAlpha(0.5f);
+                                    tv.setText("You are in the queue to accept calls, hit the Babble button to leave.");
+                                }, 500);
+                            }
+
+                        }
+                    }
                     isBusy = false;
                 }
                 APICalls.getPoolStatus();
+                */
             }
         });
 
@@ -747,8 +1242,8 @@ public class CallActivity extends Activity implements SensorEventListener
 //        }
 
         Button logout = new Button(this);
-        logout.setText("Logout");
-        logout.setTextSize(22);
+        logout.setText(Constants.LOGOUT);
+        logout.setTextSize(16);
         logout.setTransformationMethod(null);
         logout.setBackgroundResource(R.drawable.rounded_button);
         logout.setTextColor(Color.RED);
@@ -763,28 +1258,30 @@ public class CallActivity extends Activity implements SensorEventListener
             }
         });
 
-        if(width > 1500){
+        if(width > 1500)
+        {
             logout.setTextSize(26);
         }
 
-
-        LinearLayout customSwitch = new LinearLayout(this);
+        customSwitch = new LinearLayout(this);
         customSwitch.setOrientation(LinearLayout.HORIZONTAL);
         customSwitch.setGravity(Gravity.CENTER);
         customSwitch.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
         TextView listenerText = new TextView(this);
-        listenerText.setText("Listener");
+        listenerText.setText(Constants.LISTENER);
         listenerText.setTextSize(18);
         listenerText.setTextColor(Color.WHITE);
         listenerText.setTypeface(Fonts.SetTypeFace(this, R.font.cera_pro_b));
+
         TextView callerText = new TextView(this);
-        callerText.setText("Caller");
+        callerText.setText(Constants.CALLER);
         callerText.setTextSize(18);
         callerText.setTextColor(Color.WHITE);
         callerText.setTypeface(Fonts.SetTypeFace(this, R.font.cera_pro_b));
 
-        if(width > 1500){
+        if(width > 1500)
+        {
             listenerText.setTextSize(24);
             callerText.setTextSize(24);
         }
@@ -793,15 +1290,16 @@ public class CallActivity extends Activity implements SensorEventListener
         int toggleTextWidth = (int) Math.round(width * 0.25);
 
         if(toggleTextWidth < 300)
-    {
-        toggleTextWidth = 250;
-    }
+        {
+            toggleTextWidth = 250;
+        }
+
         listenerText.setWidth(toggleTextWidth);
         listenerText.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_END);
         callerText.setWidth(toggleTextWidth);
         callerText.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
 
-        Switch mode = new Switch(this);
+        mode = new Switch(this);
         mode.setChecked(isCaller);
         mode.setGravity(Gravity.CENTER);
         mode.setTextColor(Color.WHITE);
@@ -831,7 +1329,7 @@ public class CallActivity extends Activity implements SensorEventListener
                     relativeLayout.setBackgroundColor(Color.parseColor(BabbleColors.PURPLE));
                     mode.getThumbDrawable().setTint(ContextCompat.getColor(getApplicationContext(), R.color.toggleCaller));
                     callButton.setAlpha(1f);
-                    tv.setText("Press to start a call");
+                    tv.setText(Constants.PRESS_TO_CHAT);
                     count.setVisibility(View.VISIBLE);
                     logout.setVisibility(View.GONE);
                 }
@@ -839,7 +1337,8 @@ public class CallActivity extends Activity implements SensorEventListener
                 {
                     if(AppSession.inPool)
                     {
-                        callButton.setAlpha(0.5f);
+                        //callButton.setAlpha(0.5f);
+                        callButton.setAlpha(1f);
                         mode.setChecked(false);
                         InPoolPopup();
                     }
@@ -847,7 +1346,7 @@ public class CallActivity extends Activity implements SensorEventListener
                     {
                         callButton.setAlpha(1f);
                     }
-                    tv.setText("Press to start listening");
+                    tv.setText(Constants.PRESS_TO_LISTEN);
                     relativeLayout.setBackgroundColor(Color.parseColor(BabbleColors.ORANGE));
                     mode.getThumbDrawable().setTint(ContextCompat.getColor(getApplicationContext(), R.color.toggleListner));
                     count.setVisibility((View.GONE));
@@ -861,10 +1360,10 @@ public class CallActivity extends Activity implements SensorEventListener
         customSwitch.addView(callerText);
 
         Button issueText = new Button(this);
-        issueText.setText("Had an issue?");
+        issueText.setText(Constants.HAD_AN_ISSUE);
         issueText.setBackgroundColor(Color.TRANSPARENT);
         issueText.setTransformationMethod(null);
-        issueText.setTextSize(18);
+        issueText.setTextSize(20);
         issueText.setTextColor(Color.WHITE);
         issueText.setTypeface(Fonts.SetTypeFace(this, R.font.cera_pro_b));
         issueText.setOnClickListener(new View.OnClickListener(){
@@ -882,10 +1381,11 @@ public class CallActivity extends Activity implements SensorEventListener
         });
 
         count = new TextView(this);
-        count.setText(AppSession.poolCount + " active listeners");
+        count.setText(Constants.USERS_ONLINE + " : " + AppSession.poolCount + "\n\n");
         count.setTextColor(Color.parseColor(BabbleColors.ORANGE));
-        count.setTextSize(22);
+        count.setTextSize(20);
         count.setGravity(Gravity.CENTER);
+
         count.setVisibility(View.GONE);
         count.setTypeface(Fonts.SetTypeFace(this, R.font.cera_pro_b));
 
@@ -908,7 +1408,7 @@ public class CallActivity extends Activity implements SensorEventListener
         RelativeLayout bottomButtons = new RelativeLayout(this);
         RelativeLayout.LayoutParams bbp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         bbp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM );
-        bbp.setMargins(width10,0,width10,100);
+        bbp.setMargins(width10,0,width10,32);
         bottomButtons.setLayoutParams(bbp);
         bottomButtons.setGravity(Gravity.CENTER);
 
@@ -957,7 +1457,7 @@ public class CallActivity extends Activity implements SensorEventListener
         builder.setMessage("Are you sure you want to end the call and report this user?");
         builder.setTitle("Report call");
 
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(Constants.YES, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 //Continue to destination, user accepted
                 AppSession.skipRating = true;
@@ -970,7 +1470,7 @@ public class CallActivity extends Activity implements SensorEventListener
             }
         });
 
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(Constants.NO, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 //Continue to destination, user accepted
                 dialog.dismiss();
@@ -983,12 +1483,60 @@ public class CallActivity extends Activity implements SensorEventListener
 
     public void ReportPopup()
     {
+        ShowDismissiblePrompt(
+                "Call reported",
+                "Thank you for reporting this call. We will review and take the appropriate action",
+                Constants.OK
+        );
+        /*
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         builder.setMessage("Thank you for reporting this call. We will review and take the appropriate action");
         builder.setTitle("Call reported");
 
-        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(Constants.OK, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                //Continue to destination, user accepted
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog alert = builder.create();
+        alert.show();*/
+    }
+
+    public void InPoolPopup()
+    {
+        ShowDismissiblePrompt(
+                "Currently In Pool",
+                "You're currently in the listener pool, please leave before attempting to make a call.",
+                Constants.OK
+        );
+        /*
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setMessage("You're currently in the listener pool, please leave before attempting to make a call.");
+        builder.setTitle("Currently In Pool");
+
+        builder.setPositiveButton(Constants.OK, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                //Continue to destination, user accepted
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog alert = builder.create();
+        alert.show();*/
+    }
+
+    public void ShowDismissiblePrompt(String title, String message, String buttonText)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setMessage(message);
+        builder.setTitle(title);
+
+        builder.setPositiveButton(buttonText, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 //Continue to destination, user accepted
                 dialog.dismiss();
@@ -999,32 +1547,40 @@ public class CallActivity extends Activity implements SensorEventListener
         alert.show();
     }
 
-    public void InPoolPopup()
+    
+    
+    public void ShowPromptsPopup()
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        builder.setMessage("You're currently in the listener pool, please leave before attempting to make a call.");
-        builder.setTitle("Currently In Pool");
-
-        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+        builder.setMessage(Constants.HAPPI_PROMPT_INFORMATION);
+        builder.setTitle(Constants.HAPPI_PROMPT_TITLE);
+        
+        builder.setPositiveButton(Constants.OK, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 //Continue to destination, user accepted
                 dialog.dismiss();
+                MakeCall();
             }
         });
-
         AlertDialog alert = builder.create();
         alert.show();
     }
 
     public void NoListenersPopup()
     {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        ShowDismissiblePrompt(
+                "No Listeners",
+                "There are currently no active listeners, please try calling again later",
+                Constants.OK
+        );
+
+        /*AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         builder.setMessage("There are currently no active listeners, please try calling again later");
         builder.setTitle("No Listeners");
 
-        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(Constants.OK, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 //Continue to destination, user accepted
                 dialog.dismiss();
@@ -1032,8 +1588,11 @@ public class CallActivity extends Activity implements SensorEventListener
         });
 
         AlertDialog alert = builder.create();
-        alert.show();
+        alert.show();*/
     }
+
+
+
 
     private RegistrationListener registrationListener() {
         return new RegistrationListener() {
@@ -1059,7 +1618,7 @@ public class CallActivity extends Activity implements SensorEventListener
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if(activeCall != null)
+        if(InCall())
         {
             if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
                 if (event.values[0] >= -SENSOR_SENSITIVITY && event.values[0] <= SENSOR_SENSITIVITY) {
@@ -1245,12 +1804,15 @@ public class CallActivity extends Activity implements SensorEventListener
                 handler.postDelayed(new Runnable() {
                     public void run() {
                         //refresh UI
-                        if (!isBackgrounded) {
-                            if (activeCall == null) {
+                        if (!isBackgrounded)
+                        {
+                            if (!InCall()) {
                                 relativeLayout.invalidate();
-                                count.setText(AppSession.poolCount + " active listeners");
+                                count.setText(Constants.USERS_ONLINE + " : " + AppSession.poolCount + "\n\n");
+
                                 if (AppSession.inPool) {
-                                    callButton.setAlpha(0.5f);
+                                    //callButton.setAlpha(0.5f);
+                                    callButton.setAlpha(1f);
                                 } else {
                                     callButton.setAlpha(1f);
                                 }
@@ -1287,9 +1849,10 @@ public class CallActivity extends Activity implements SensorEventListener
                 RelativeLayout.LayoutParams.FILL_PARENT,
                 RelativeLayout.LayoutParams.FILL_PARENT);
 
-        isCaller = false;
+        isCaller = false;//true;
         activeCall = null;
         isBackgrounded = false;
+
         // Setting the RelativeLayout as our content view
         setContentView(mainLayout(), rlp);
     }
@@ -1304,7 +1867,7 @@ public class CallActivity extends Activity implements SensorEventListener
     }
 
     private void mute(ImageButton btn) {
-        if (activeCall != null) {
+        if (InCall()) {
             boolean mute = !activeCall.isMuted();
             activeCall.mute(mute);
             if(mute)
@@ -1369,14 +1932,17 @@ public class CallActivity extends Activity implements SensorEventListener
         registerReceiver();
         mSensorManager.registerListener(this, mProximity, SensorManager.SENSOR_DELAY_NORMAL);
         isBackgrounded = false;
+        SetCallButtonState(Constants.PRESS_TO_CHAT, 1f);
 
-        if (AppSession.inPool) {
-            tv.setText("You are in the queue to accept calls, hit the Babble button to leave.");
-            callButton.setAlpha(0.5f);
-        } else {
-            tv.setText("Press to start listening");
-            callButton.setAlpha(1f);
+        /*
+        if (AppSession.inPool)
+        {
+            SetCallButtonState(Constants.PRESS_TO_CHAT, 1f);
         }
+        else
+        {
+            SetCallButtonState(Constants.PRESS_TO_LISTEN, 1f);
+        }*/
     }
 
         @Override
@@ -1601,7 +2167,7 @@ public class CallActivity extends Activity implements SensorEventListener
      * Disconnect from Call
      */
     private void disconnect() {
-        if (activeCall != null) {
+        if (InCall()) {
             activeCall.disconnect();
             activeCall = null;
         }
@@ -1659,7 +2225,7 @@ public class CallActivity extends Activity implements SensorEventListener
         alertDialogBuilder.setIcon(com.dfsl.mybabble.R.drawable.ic_call_black_24dp);
         alertDialogBuilder.setTitle("Call");
         alertDialogBuilder.setPositiveButton("Call", callClickListener);
-        alertDialogBuilder.setNegativeButton("Cancel", cancelClickListener);
+        alertDialogBuilder.setNegativeButton(Constants.CANCEL, cancelClickListener);
         alertDialogBuilder.setCancelable(false);
 
         LayoutInflater li = LayoutInflater.from(activity);
@@ -1749,44 +2315,84 @@ public class CallActivity extends Activity implements SensorEventListener
     {
         Context context = this;
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-if(!AppSession.inPool) {
-    builder.setMessage("You will no longer be contactable as a listener until you log back in. Do you want to logout?");
-    builder.setTitle("Logout");
 
-    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-        public void onClick(DialogInterface dialog, int id) {
-            //Continue to destination, user accepted
+        // leave listener pool and logout
+        builder.setMessage("You will no longer be contactable as a listener until you log back in. Do you want to logout?");
+        builder.setTitle("Logout");
+
+        builder.setPositiveButton(Constants.YES, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id)
+            {
+                LeavePool();
+
+                //Continue to destination, user accepted
+                SharedPreferences prefs = context.getSharedPreferences("babblePrefs", context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = prefs.edit();
+                AppSession.bToken = "";
+                editor.putString("bearerToken", AppSession.bToken);
+                editor.putBoolean("verified", false);
+                editor.apply();
+                Intent myIntent = new Intent(getApplicationContext(), LandingActivity.class);
+                startActivity(myIntent);
+                dialog.dismiss();
+            }
+        });
+
+        builder.setNegativeButton(Constants.NO, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
 
 
-            SharedPreferences prefs = context.getSharedPreferences("babblePrefs", context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = prefs.edit();
-            AppSession.bToken = "";
-            editor.putString("bearerToken", AppSession.bToken);
-            editor.putBoolean("verified", false);
-            editor.apply();
-            Intent myIntent = new Intent(getApplicationContext(), LandingActivity.class);
-            startActivity(myIntent);
-            dialog.dismiss();
+
+
+
+
+
+
+
+        /*
+        if(!AppSession.inPool)
+        {
+            builder.setMessage("You will no longer be contactable as a listener until you log back in. Do you want to logout?");
+            builder.setTitle("Logout");
+
+            builder.setPositiveButton(Constants.YES, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id)
+                {
+                    //Continue to destination, user accepted
+                    SharedPreferences prefs = context.getSharedPreferences("babblePrefs", context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = prefs.edit();
+                    AppSession.bToken = "";
+                    editor.putString("bearerToken", AppSession.bToken);
+                    editor.putBoolean("verified", false);
+                    editor.apply();
+                    Intent myIntent = new Intent(getApplicationContext(), LandingActivity.class);
+                    startActivity(myIntent);
+                    dialog.dismiss();
+                }
+            });
+
+            builder.setNegativeButton(Constants.NO, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
         }
-    });
+        else
+        {
+            builder.setMessage("You're currently in the listener pool, please leave before attempting to logout.");
+            builder.setTitle("Currently In Pool");
 
-    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            dialog.dismiss();
-        }
-    });
-}
-else{
-    builder.setMessage("You're currently in the listener pool, please leave before attempting to logout.");
-    builder.setTitle("Currently In Pool");
-
-    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-        public void onClick(DialogInterface dialog, int id) {
-            dialog.dismiss();
-        }
-    });
-}
+            builder.setPositiveButton(Constants.OK, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    dialog.dismiss();
+                }
+            });
+        }*/
 
         AlertDialog alert = builder.create();
         alert.show();

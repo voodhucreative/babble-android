@@ -121,7 +121,7 @@ public class ResetPassActivity extends Activity
         submit.setLayoutParams(tmarign);
         submit.setTransformationMethod(null);
         submit.setTypeface(Fonts.SetTypeFace(this, R.font.cera_pro_b));
-        submit.setTextSize(24);
+        submit.setTextSize(16);
 
         submit.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v)

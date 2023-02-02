@@ -138,10 +138,10 @@ public class LoginActivity extends Activity
         submit.setLayoutParams(tmarign);
         submit.setTransformationMethod(null);
         submit.setTypeface(Fonts.SetTypeFace(this, R.font.cera_pro_b));
-        submit.setTextSize(24);
+        submit.setTextSize(16);
 
         if(width > 1500){
-            submit.setTextSize(26);
+            submit.setTextSize(18);
         }
 
         Button register = new Button(this);

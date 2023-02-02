@@ -33,21 +33,29 @@ public class IncomingCallNotificationService extends Service {
         if (action != null) {
             CallInvite callInvite = intent.getParcelableExtra(Constants.INCOMING_CALL_INVITE);
             int notificationId = intent.getIntExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, 0);
-            switch (action) {
-                case Constants.ACTION_INCOMING_CALL:
-                    handleIncomingCall(callInvite, notificationId);
-                    break;
-                case Constants.ACTION_ACCEPT:
-                    accept(callInvite, notificationId);
-                    break;
-                case Constants.ACTION_REJECT:
-                    reject(callInvite);
-                    break;
-                case Constants.ACTION_CANCEL_CALL:
-                    handleCancelledCall(intent);
-                    break;
-                default:
-                    break;
+
+            if (!AppSession.acceptingCalls)
+            {
+                reject(callInvite);
+            }
+            else
+            {
+                switch (action) {
+                    case Constants.ACTION_INCOMING_CALL:
+                        handleIncomingCall(callInvite, notificationId);
+                        break;
+                    case Constants.ACTION_ACCEPT:
+                        accept(callInvite, notificationId);
+                        break;
+                    case Constants.ACTION_REJECT:
+                        reject(callInvite);
+                        break;
+                    case Constants.ACTION_CANCEL_CALL:
+                        handleCancelledCall(intent);
+                        break;
+                    default:
+                        break;
+                }
             }
         }
         return START_NOT_STICKY;

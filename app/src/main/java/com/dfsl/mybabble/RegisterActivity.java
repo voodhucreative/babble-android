@@ -54,7 +54,10 @@ public class RegisterActivity extends Activity
 
     SharedPreferences.Editor editor;
 
+    EditText firstName;
+    EditText lastName;
     EditText email;
+    EditText phoneNumber;
     EditText pass;
     EditText passCon;
 
@@ -88,7 +91,7 @@ public class RegisterActivity extends Activity
                 RelativeLayout.LayoutParams.FILL_PARENT);
 
         RelativeLayout.LayoutParams tmarign = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        tmarign.setMargins(0,40,0,40);
+        tmarign.setMargins(0,24,0,24);
         tmarign.addRule(RelativeLayout.CENTER_HORIZONTAL);
 
         // Creating a new TextView
@@ -133,8 +136,8 @@ public class RegisterActivity extends Activity
         pass.setGravity(Gravity.CENTER);
         pass.setBackgroundResource(R.drawable.rounded_button);
         pass.setPadding(40,25,40,25);
+        pass.setLayoutParams(tmarign);
         pass.setTypeface(Fonts.SetTypeFace(this, R.font.cera_pro_r));
-
         pass.addTextChangedListener(EntryTextSpacer.Watcher(pass));
 
         passCon = new EditText(this);
@@ -145,8 +148,39 @@ public class RegisterActivity extends Activity
         passCon.setPadding(40,25,40,25);
         passCon.setLayoutParams(tmarign);
         passCon.setTypeface(Fonts.SetTypeFace(this, R.font.cera_pro_r));
-
         passCon.addTextChangedListener(EntryTextSpacer.Watcher(passCon));
+
+
+        firstName = new EditText(this);
+        firstName.setHint("First name");
+        firstName.setGravity(Gravity.CENTER);
+        firstName.setInputType(InputType.TYPE_CLASS_TEXT);
+        firstName.setBackgroundResource(R.drawable.rounded_button);
+        firstName.setPadding(40,25,40,25);
+        firstName.setLayoutParams(tmarign);
+        firstName.setTypeface(Fonts.SetTypeFace(this, R.font.cera_pro_r));
+
+        lastName = new EditText(this);
+        lastName.setHint("Last name");
+        lastName.setGravity(Gravity.CENTER);
+        lastName.setInputType(InputType.TYPE_CLASS_TEXT);
+        lastName.setBackgroundResource(R.drawable.rounded_button);
+        lastName.setPadding(40,25,40,25);
+        lastName.setLayoutParams(tmarign);
+        lastName.setTypeface(Fonts.SetTypeFace(this, R.font.cera_pro_r));
+
+        phoneNumber = new EditText(this);
+        phoneNumber.setHint("Phone number");
+        phoneNumber.setGravity(Gravity.CENTER);
+        phoneNumber.setInputType(InputType.TYPE_CLASS_PHONE);
+        phoneNumber.setBackgroundResource(R.drawable.rounded_button);
+        phoneNumber.setPadding(40,25,40,25);
+        phoneNumber.setLayoutParams(tmarign);
+        phoneNumber.setTypeface(Fonts.SetTypeFace(this, R.font.cera_pro_r));
+
+
+
+
 
         Button submit = new Button(this);
         submit.setBackgroundResource(R.drawable.rounded_button);
@@ -154,10 +188,10 @@ public class RegisterActivity extends Activity
         GradientDrawable btn = (GradientDrawable) submit.getBackground();
         btn.setColor(Color.parseColor(BabbleColors.DARK_ORANGE));
         submit.setText("Sign up");
-        //submit.setLayoutParams(tmarign);
+        submit.setLayoutParams(tmarign);
         submit.setTransformationMethod(null);
         submit.setTypeface(null, Typeface.BOLD);
-        submit.setTextSize(24);
+        submit.setTextSize(16);
         submit.setTypeface(Fonts.SetTypeFace(this, R.font.cera_pro_b));
 
         submit.setOnClickListener(new View.OnClickListener(){
@@ -199,8 +233,12 @@ public class RegisterActivity extends Activity
         // Adding the TextView to the RelativeLayout as a child
         cont.addView(tv);
         cont.addView(errors);
+        cont.addView(firstName);
+        cont.addView(lastName);
+
         cont.addView(email);
-        //cont.addView(user);
+        cont.addView(phoneNumber);
+
         cont.addView(pass);
         cont.addView(passCon);
         cont.addView(submit);

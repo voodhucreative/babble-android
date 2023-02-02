@@ -64,22 +64,14 @@ public class VerifyAccountActivity extends Activity
         tmarign.addRule(RelativeLayout.CENTER_HORIZONTAL);
 
         // Creating a new TextView
-        TextView tv = new TextView(this);
-        tv.setText("Thanks! We’ve sent a verification code to your email address. Please enter it below to reset your password.");
-        tv.setTextSize(28);
-        tv.setTextColor(Color.WHITE);
-        tv.setGravity(Gravity.LEFT);
-        tv.setTypeface(Fonts.SetTypeFace(this, R.font.cera_pro_b));
-        //tv.setWidth();
-
+        TextView tv = CustomWidgets.SimpleTextView(this, 24, "Thanks! We’ve sent a verification code to your email address. Please enter it below to reset your password.", Color.WHITE, Gravity.LEFT);
         if (width <= 800)
         {
             tv.setPadding(0, 20, 0, 0);
-            tv.setTextSize(24);
+            tv.setTextSize(20);
         }
 
         errors = new TextView(this);
-        //errors.setText("wrong password");
         errors.setTextSize(22);
         errors.setTextColor(Color.parseColor(BabbleColors.RED));
         errors.setGravity(Gravity.CENTER);
@@ -104,7 +96,7 @@ public class VerifyAccountActivity extends Activity
         submit.setLayoutParams(tmarign);
         submit.setTransformationMethod(null);
         submit.setTypeface(Fonts.SetTypeFace(this, R.font.cera_pro_b));
-        submit.setTextSize(24);
+        submit.setTextSize(16);
         submit.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v)
             {
@@ -219,6 +211,7 @@ public class VerifyAccountActivity extends Activity
         spacer.setTextSize(10);
         spacer.setTextColor(Color.TRANSPARENT);
         spacer.setGravity(Gravity.CENTER);
+
 
         // Adding the TextView to the RelativeLayout as a child
         cont.addView(tv);
